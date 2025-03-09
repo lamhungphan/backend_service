@@ -1,6 +1,4 @@
-CREATE DATABASE db_project_base;
-
-USE db_project_base;
+-- CREATE DATABASE db_project_base;
 
 CREATE TABLE tbl_user (
     id SERIAL PRIMARY KEY,
@@ -74,6 +72,16 @@ CREATE TABLE tbl_token (
     refresh_token TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE tbl_product (
+    id SERIAL PRIMARY KEY,
+    price FLOAT NOT NULL,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now(),
+    description VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    user_id INT NOT NULL
 );
 
 -- Trigger cập nhật updated_at

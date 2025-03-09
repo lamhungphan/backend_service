@@ -5,7 +5,6 @@ import com.course.projectbase.common.UserType;
 import lombok.Getter;
 import lombok.ToString;
 
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -21,5 +20,5 @@ public class UserCreationRequest implements Serializable {
     private String email;
     private String phone;
     private UserType type;
-    private List<AddressRequest> addresses; // home,office
+    private List<AddressRequest> addresses; // home, office
 }
