@@ -4,6 +4,7 @@ import com.course.projectbase.common.UserStatus;
 import com.course.projectbase.controller.request.UserCreationRequest;
 import com.course.projectbase.controller.request.UserPasswordRequest;
 import com.course.projectbase.controller.request.UserUpdateRequest;
+import com.course.projectbase.controller.response.UserPageResponse;
 import com.course.projectbase.controller.response.UserResponse;
 import com.course.projectbase.exception.ResourceNotFoundException;
 import com.course.projectbase.model.AddressEntity;
@@ -13,12 +14,19 @@ import com.course.projectbase.repository.UserRepository;
 import com.course.projectbase.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j(topic = "User-Service")
@@ -32,13 +40,56 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserResponse> findAll() {
-        return List.of();
+    public UserPageResponse findAll(String keyword, String sort, int page, int size) {
+        log.info("findAll start");
+        Sort.Order order = new Sort.Order(Sort.Direction.ASC, "id");
+        if (StringUtils.hasLength(sort)) {
+            Pattern pattern = Pattern.compile("^[a-zA-Z]+$");
+            Matcher matcher = pattern.matcher(sort);
+            if (matcher.find()) {
+                if (matcher.group(3).equalsIgnoreCase("asc")) {
+                    String columnName = matcher.group(1);
+                    order = new Sort.Order(Sort.Direction.ASC, columnName);
+                } else {
+                    order = new Sort.Order(Sort.Direction.DESC, sort);
+                }
+            }
+        }
+
+        // Bắt đầu page = 1
+        int pageNo = 0;
+        if (page > 0) {
+            pageNo = (page - 1);
+        }
+
+        // Paging
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(order));
+        Page<UserEntity> entityPage;
+        if (StringUtils.hasLength(keyword)) {
+            keyword = "%" + keyword.toLowerCase() + "%";
+            entityPage = userRepository.searchByKeyword(keyword, pageable);
+        } else {
+            entityPage = userRepository.findAll(pageable);
+        }
+        return getUserPageResponse(page, size, entityPage);
     }
 
     @Override
-    public UserResponse findById(int id) {
-        return null;
+    public UserResponse findById(Long id) {
+        log.info("Find user by id: {}", id);
+
+        UserEntity userEntity = getUserEntity(id);
+
+        return UserResponse.builder()
+                .id(id)
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .gender(userEntity.getGender())
+                .birthday(userEntity.getBirthday())
+                .username(userEntity.getUsername())
+                .email(userEntity.getEmail())
+                .phone(userEntity.getPhone())
+                .build();
     }
 
     @Override
@@ -159,10 +210,40 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Get user by id
+     *
      * @param id
      * @return
      */
     private UserEntity getUserEntity(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    /**
+     * Convert UserEntity to UserResponse
+     * @param page
+     * @param size
+     * @param userEntities
+     * @return
+     */
+    private static UserPageResponse getUserPageResponse(int page, int size, Page<UserEntity> userEntities) {
+        List<UserResponse> userList = userEntities.stream().map(entity -> UserResponse.builder()
+                .id(entity.getId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .gender(entity.getGender())
+                .birthday(entity.getBirthday())
+                .username(entity.getUsername())
+                .email(entity.getEmail())
+                .phone(entity.getPhone())
+                .build()
+        ).toList();
+
+        UserPageResponse response = new UserPageResponse();
+        response.setPageNumber(page);
+        response.setPageSize(size);
+        response.setTotalElements(userEntities.getTotalElements());
+        response.setTotalPages(userEntities.getTotalPages());
+        response.setUsers(userList);
+        return response;
     }
 }

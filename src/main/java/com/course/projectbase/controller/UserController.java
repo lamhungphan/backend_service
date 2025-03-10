@@ -33,41 +33,16 @@ public class UserController {
     @Operation(summary = "Get user list", description = "API retrieve user from database")
     @GetMapping("/list")
     public Map<String, Object> getList(@RequestParam(required = false) String keyword,
+                                       @RequestParam(required = false) String sort,
                                        @RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "20") int size) {
-        UserResponse userResponse1 = new UserResponse();
-        userResponse1.setId(1l);
-        userResponse1.setFirstName("Hung");
-        userResponse1.setLastName("Phan");
-        userResponse1.setGender(Gender.MALE);
-        userResponse1.setBirthday(new Date());
-        userResponse1.setUsername("admin");
-        userResponse1.setEmail("admin@gmail.com");
-        userResponse1.setPhone("0898500434");
-
-        UserResponse userResponse2 = new UserResponse();
-        userResponse2.setId(2l);
-        userResponse2.setFirstName("Leo");
-        userResponse2.setLastName("Messi");
-        userResponse2.setGender(Gender.MALE);
-        userResponse2.setBirthday(new Date());
-        userResponse2.setUsername("user");
-        userResponse2.setEmail("user@gmail.com");
-        userResponse2.setPhone("0971234567");
-
-        List<UserResponse> userList = List.of(userResponse1, userResponse2);
-
-        UserPageResponse userPageResponse = new UserPageResponse();
-        userPageResponse.setPageNumber(page);
-        userPageResponse.setPageSize(size);
-        userPageResponse.setTotalPages(1);
-        userPageResponse.setTotalElements(2);
-        userPageResponse.setUsers(userList);
+                                       @RequestParam(defaultValue = "10") int size) {
+        log.info("Get user list");
+        UserPageResponse pageResponse = userService.findAll(keyword, sort, page, size);
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", HttpStatus.OK.value());
         result.put("message", "user list");
-        result.put("data", userPageResponse);
+        result.put("data", pageResponse);
 
         return result;
     }
@@ -75,16 +50,8 @@ public class UserController {
     @Operation(summary = "Get user detail", description = "API retrieve user detail by ID from database")
     @GetMapping("/{userId}")
     public Map<String, Object> getUserDetail(@PathVariable Long userId) {
-
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(userId);
-        userResponse.setFirstName("Hung");
-        userResponse.setLastName("Nguyen");
-        userResponse.setGender(Gender.MALE);
-        userResponse.setBirthday(new Date());
-        userResponse.setUsername("admin");
-        userResponse.setEmail("admin@gmail.com");
-        userResponse.setPhone("0898500434");
+        log.info("Get user detail by ID: {}", userId);
+        UserResponse userResponse = userService.findById(userId);
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", HttpStatus.OK.value());
@@ -123,6 +90,7 @@ public class UserController {
     @PatchMapping("/change-pwd")
     public Map<String, Object> changePassword(@RequestBody UserPasswordRequest request) {
         log.info("Changing password for user: {}", request);
+
         userService.changePassword(request);
 
         Map<String, Object> result = new LinkedHashMap<>();
@@ -137,6 +105,7 @@ public class UserController {
     @DeleteMapping("/delete/{userId}")
     public Map<String, Object> deleteUser(@PathVariable Long userId) {
         log.info("Deleting user: {}", userId);
+
         userService.deleteById(userId);
 
         Map<String, Object> result = new LinkedHashMap<>();
