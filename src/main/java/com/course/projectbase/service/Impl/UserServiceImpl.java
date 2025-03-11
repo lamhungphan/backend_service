@@ -106,6 +106,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public long save(UserCreationRequest req) {
         log.info("Saving user {}", req);
+
+        UserEntity userByEmail = userRepository.findByEmail(req.getEmail());
+        if (userByEmail != null) {
+            throw new ResourceNotFoundException("User with email " + req.getEmail() + " already exists");
+        }
+
         UserEntity user = new UserEntity();
         user.setFirstName(req.getFirstName());
         user.setLastName(req.getLastName());
@@ -117,6 +123,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(req.getEmail());
         user.setType(req.getType());
         user.setStatus(UserStatus.NONE);
+
         userRepository.save(user);
         log.info("Saved user {}", user); // đến đây đã lưu vào db hay chưa?
 

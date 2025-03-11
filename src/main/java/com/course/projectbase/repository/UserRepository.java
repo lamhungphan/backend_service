@@ -10,10 +10,14 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "FROM UserEntity u " +
-                    "WHERE u.status = 'ACTIVE' " +
-                    "AND lower(u.firstName) LIKE :keyword " +
-                    "OR lower(u.lastName) LIKE :keyword " +
-                    "OR u.phone LIKE :keyword " +
-                    "OR lower(u.email) LIKE :keyword")
+            "WHERE u.status = 'ACTIVE' " +
+            "AND lower(u.firstName) LIKE :keyword " +
+            "OR lower(u.lastName) LIKE :keyword " +
+            "OR u.phone LIKE :keyword " +
+            "OR lower(u.email) LIKE :keyword")
     Page<UserEntity> searchByKeyword(String keyword, Pageable pageable);
+
+    UserEntity findByUsername(String username);
+
+    UserEntity findByEmail(String email);
 }
