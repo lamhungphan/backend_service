@@ -11,6 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.io.IOException;
 import java.util.Date;
 
 @Getter
@@ -69,4 +70,13 @@ public class UserEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updatedAt;
+
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        //
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        //
+    }
 }

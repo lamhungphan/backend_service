@@ -11,6 +11,7 @@ import com.course.projectbase.model.AddressEntity;
 import com.course.projectbase.model.UserEntity;
 import com.course.projectbase.repository.AddressRepository;
 import com.course.projectbase.repository.UserRepository;
+import com.course.projectbase.service.EmailService;
 import com.course.projectbase.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private final AddressRepository addressRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
@@ -207,7 +210,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         log.info("Deleting user {}", id);
         UserEntity user = getUserEntity(id);
         user.setStatus(UserStatus.INACTIVE);

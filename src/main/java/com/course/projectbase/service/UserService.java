@@ -6,8 +6,6 @@ import com.course.projectbase.controller.request.UserUpdateRequest;
 import com.course.projectbase.controller.response.UserPageResponse;
 import com.course.projectbase.controller.response.UserResponse;
 
-import java.util.List;
-
 public interface UserService {
     UserPageResponse findAll(String keyword, String sort, int page, int size);
 
@@ -23,5 +21,5 @@ public interface UserService {
 
     void changePassword(UserPasswordRequest req);
 
-    void deleteById(Long id);
+    void delete(Long id);
 }
