@@ -3,8 +3,10 @@ package com.course.projectbase.controller.request;
 import com.course.projectbase.common.Gender;
 import com.course.projectbase.common.UserType;
 import com.course.projectbase.validation.ValidBirthDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,10 +29,10 @@ public class UserCreationRequest implements Serializable {
 
     private Gender gender;
 
-    @ValidBirthDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Past(message = "Birthdate must be in the past")
     private Date birthday;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username only contain string, number, underscore")
     private String username;
 
     @Email(message = "Email invalid")

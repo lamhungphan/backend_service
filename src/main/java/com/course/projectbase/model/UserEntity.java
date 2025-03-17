@@ -3,6 +3,8 @@ package com.course.projectbase.model;
 import com.course.projectbase.common.Gender;
 import com.course.projectbase.common.UserStatus;
 import com.course.projectbase.common.UserType;
+import com.course.projectbase.validation.ValidBirthDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,21 +12,26 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_user")
-public class UserEntity {
+public class UserEntity implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "frist_name", length = 255)
+    @Column(name = "first_name", length = 255)
     private String firstName;
 
     @Column(name = "last_name", length = 255)
@@ -39,7 +46,7 @@ public class UserEntity {
     @Temporal(TemporalType.DATE)
     private Date birthday;
 
-    @Column(name = "user_name", unique = true, nullable = false, length = 255)
+    @Column(name = "username", unique = true, nullable = false, length = 255)
     private String username;
 
     @Column(name = "password", length = 255)
@@ -78,5 +85,30 @@ public class UserEntity {
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         //
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserStatus.ACTIVE.equals(status);
     }
 }
