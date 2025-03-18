@@ -1,7 +1,9 @@
 package com.course.projectbase.controller;
 
+import com.course.projectbase.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,9 +14,12 @@ import com.course.projectbase.controller.response.TokenResponse;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Authentication Controller")
 @Slf4j(topic = "AUTHENTICATION-CONTROLLER")
+@Tag(name = "Authentication Controller")
+@RequiredArgsConstructor
 public class AuthenticationController {
+
+    private final AuthenticationService authenticationService;
 
     @Operation(summary = "Access token", description = "Get access token and refresh token by username and password")
     @PostMapping("/access-token")
