@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(req.getEmail());
         user.setPhone(req.getPhone());
         user.setUsername(req.getUsername());
-        user.setEmail(req.getEmail());
+        user.setPassword(req.getPassword());
         user.setType(req.getType());
         user.setStatus(UserStatus.NONE);
 

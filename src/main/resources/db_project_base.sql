@@ -1,5 +1,7 @@
 -- CREATE DATABASE db_project_base;
 
+DROP DATABASE IF EXISTS db_project_base;
+
 DROP TABLE IF EXISTS tbl_user;
 CREATE TABLE tbl_user (
     id SERIAL PRIMARY KEY,
@@ -10,7 +12,7 @@ CREATE TABLE tbl_user (
     phone VARCHAR(15),
     email VARCHAR(255) UNIQUE,
     username VARCHAR(255) UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
     status VARCHAR(20) CHECK (status IN ('NONE', 'ACTIVE', 'INACTIVE')),
     type VARCHAR(20) CHECK (type IN ('OWNER', 'ADMIN', 'USER')),
     created_at TIMESTAMP DEFAULT now(),

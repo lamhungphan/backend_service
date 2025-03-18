@@ -23,7 +23,7 @@ public class OpenApiConfig {
     public GroupedOpenApi publicApi(@Value("${openapi.service.api-docs}") String apiDocs) {
         return GroupedOpenApi.builder()
                 .group(apiDocs) // /v3/api-docs/backend-service
-                .packagesToScan("com.course.project-base.controller")
+                .packagesToScan("com.course.projectbase.controller")
                 .build();
     }
 

@@ -35,6 +35,9 @@ public class UserCreationRequest implements Serializable {
 
     private String username;
 
+    @NotBlank(message = "password must not be blank")
+    private String password;
+
     @Email(message = "Email invalid")
     private String email;
 

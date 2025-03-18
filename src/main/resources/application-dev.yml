@@ -15,11 +15,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-#  sendGrid:
-#    apiKey: ${SENDGRID_API_KEY:DUMMY-SENDGRID-API-KEY}
-#    fromEmail: ${SENDGRID_FROM_EMAIL:lamhungphan1999@gmail.com}
-#    templateId: ${SENDGRID_TEMPLATE_ID:d-2116466afd0a438b90615184dd569e42}
-#    verificationLink: ${SENDGRID_VERIFICATION_LINK:http://localhost:8080/user/confirm-email}
 
 # application-dev.yml
 springdoc:
@@ -27,12 +22,18 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+    use-root-path: true
+
 openapi:
   service:
     api-docs: backend-service
     server: http://localhost:${server.port}
     title: Backend service
     version: 1.0.0
+
+logging:
+  level:
+    org.springdoc: DEBUG
 
 jwt:
     expiryMinutes: ${JWT_EXPIRY_MINUTES:60}
